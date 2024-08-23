@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login_style.css">
+    <title>Login</title>
+</head>
+<body>
+    <form id="myform" action="/login" onsubmit="return checkValid(this)" enctype="application/x-www-form-urlencoded" method="POST">
+        <h2 class="text">Login</h2>
+
+        <label class="text" for="username">Username</label>
+        <textarea name="username" id="username",placeholder="Username"></textarea>
+
+        <label class="text" for="password">Password</label>
+        <textarea name="password" id="password",placeholder="Password"></textarea>
+
+        <input type="submit" value="submit">
+
+        <a href="/frontend/signup/signup.html" class="text" style="color:blue"> Don't have an account? Sign up</a>
+    </form>
+    <script src="login_script.js"></script>
+</body>
+</html>
