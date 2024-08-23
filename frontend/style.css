@@ -1,0 +1,71 @@
+body{
+    align-items: center;
+    background-color: #3795BD;
+    height: 100vh;
+    width: 100vw;
+    margin: 0px;
+    position: absolute;
+}
+
+.Text{
+    font-family: 'Roboto' ,sans-serif;
+    font-style: normal;
+}
+
+.To_Do_Title{
+    padding: 0px;
+    margin: 12px;
+}
+
+.del_btn{
+    float: right;
+    position: absolute;
+    margin-left: 270px;
+    margin-top: 16px;
+    height: 20px;
+    width: 20px;
+}
+
+.To_Do_div{
+    background-color: #3A1078;
+    border-radius: 20px;
+    
+    height: 50px;
+    width: 300px;
+
+    margin: 10px;
+    
+    display: flex;
+
+    cursor: pointer;
+}
+
+.checked{
+    text-decoration: line-through;
+    background-color: #4E31AA;
+}
+
+
+.To_Do_div:hover{
+    background-color: #4E31AA;
+}
+
+.checkbox{
+    appearance: none;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 1px solid black;
+    width: 25px;
+    height: 25px;
+    margin-top: 12px;
+    margin-left: 10px;
+
+}
+.checkbox:checked{
+    appearance: auto;
+    clip-path: circle(50% at 50% 50%);
+    background-color: blue;
+}
+#textArea{
+    resize: none;
+}

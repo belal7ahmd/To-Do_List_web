@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>To Do List</title>
+</head>
+<body>
+    <header style="margin: 10px;">
+        <h1 class="Text" style="margin-top: 10px;">To Do list</h1>
+        <textarea name="meow" id="textArea" placeholder="To do here"></textarea>
+        <button type="submit" onclick="new_element()">Add</button>
+
+    </header>
+    
+
+
+
+    <div id="To_Do_list_div">
+        <div class="To_Do_div" onclick="check(this)">
+            <input class="checkbox" type="checkbox">
+            <h3 class="Text To_Do_Title">this text is from laptop</h3>
+            <input src="images\delete_13169948.png" type="image" class="del_btn" onclick="Delete(this)"></button>
+        </div>
+        <div class="To_Do_div"  onclick="check(this)">
+            <input class="checkbox" type="checkbox">
+            <h3 class="Text To_Do_Title">meow</h3>
+            <input src="images\delete_13169948.png" type="image" class="del_btn" onclick="Delete(this)"></button>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+    
+</body>
+</html>
