@@ -1,0 +1,37 @@
+.text{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(28, 27, 33);
+    
+}
+
+body{
+    background-color: rgb(240, 255, 255);
+    height: 95.7vh;
+    width: 68vw;
+    padding-left: 30vw;
+    padding-top: 25px;
+    margin: 0
+}
+
+textarea{
+    resize: none;
+    border-radius: 10px;
+    background-color:#ffffff;
+    border:solid #2b2a33 1px;
+    margin: 10px;
+    padding: 5px;
+    
+}
+
+input{
+    color:#2b2a33
+}
+
+#myform{
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+    width: 30vw;
+    padding: 50px;
+    padding-top: 25px;
+    display:grid
+};

@@ -57,3 +57,27 @@ function new_element(){
 
 
 };
+
+function sendSave(){
+    var Todos_elements = document.getElementsByClassName("To_Do_div");
+    var Todos_list = [];
+    var current;
+    for (let i=0;i < Todos_elements.length;i++){
+        current = Todos_elements.item(i)
+        Todos_list.push({
+            checked:(current.classList.contains("checked"))?1:0,
+            Todo_name:current.getElementsByClassName("To_Do_Title")[0].textContent
+        });
+        
+    };
+    
+
+    fetch("save", {
+        method: "POST",
+        body: JSON.stringify(Todos_list),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      });
+
+}
