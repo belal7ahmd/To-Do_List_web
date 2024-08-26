@@ -1,4 +1,12 @@
 
+fetch("load",{method:"GET"}).then((res)=>res.json()).then((json)=>{
+    
+    for (let i=0;i<json.length;i++){
+        new_element(json[i].todo_title,(json[i].is_checked === 1)?true:false)
+    }
+})
+
+
 function check(parent){
     let checkbox = parent.getElementsByClassName("checkbox").item(0)
     parent.classList.toggle("checked")
@@ -16,31 +24,38 @@ function Delete(btn){
     parent.remove()
 };
 
-function new_element(){
+function add_btn(){
     let textArea = document.getElementById("textArea");
 
     let text = textArea.value
     if (text.split(" ") == ""){
         textArea.focus()
         alert("the to do has to have a title")
-        return
+        return;
     };
-        
+
     textArea.value = ""
+
+    new_element(text,false)
+}
+
+function new_element(title,checked){
 
     let main_div = document.createElement("div");
     let checkbox = document.createElement("input");
-    let title = document.createElement("h3");
+    let title_element = document.createElement("h3");
     let del_btn = document.createElement("input");
 
     main_div.className = "To_Do_div";
+    (checked)?main_div.classList.add("checked"):"no"
     main_div.onclick = function(){check(this)};
 
     checkbox.className = "checkbox";
     checkbox.type = "checkbox";
+    checkbox.checked = checked
 
-    title.textContent = text;
-    title.className = "Text To_Do_Title";
+    title_element.textContent = title;
+    title_element.className = "Text To_Do_Title";
     
     del_btn.type = "image"
     del_btn.src = "images/delete_13169948.png"
@@ -49,7 +64,7 @@ function new_element(){
 
 
     main_div.appendChild(checkbox);
-    main_div.appendChild(title);
+    main_div.appendChild(title_element);
     main_div.appendChild(del_btn);
 
     document.getElementById("To_Do_list_div").appendChild(main_div);

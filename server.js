@@ -11,6 +11,14 @@ var conn = mysql.createConnection({
   database:"todo_list"
 });
 
+conn.connect((err) => {
+  if (err) {
+    console.log(`Can't connect to the database\nerror:${err}`)
+    return;
+  }
+  console.log("Connected to the database")
+});
+
 
 var app = express();
 
@@ -45,14 +53,12 @@ app.use(session({
 
 app.post('/login',function(req,res){
   console.log(req.body)
-  conn.connect((err)=>{
-    if (err) throw err;
     conn.query("select user_id,username,user_password from todo_list.user_;",(err,result)=>{
-      if (err) throw err;
+      if (err) console.log(err);
       searched = result.find(user => user.username === req.body.username)
       if (searched !== undefined){
         bcrypt.compare(req.body.password,searched["user_password"],(err,same)=>{
-          if (err) throw err;
+          if (err) console.log(err);
           if (same){
             req.session.user = {id:searched["user_id"],username:searched["username"]}
             console.log(req.session.user)
@@ -76,23 +82,20 @@ app.post('/login',function(req,res){
     })
     return;
   })
-});
 
 app.post('/signup', function(req, res) {
   console.log(req.body)
-  conn.connect((err) => {
-    if (err) {throw err};
 
     conn.query("select user_id,username from todo_list.user_;",(err,result)=>{
-      if (err) throw err;
+      if (err) console.log(err);
       var searched = result.find(user => user.username === req.body.username);
       if (searched === undefined){
 
         bcrypt.hash(req.body.password,10,(err,password)=>{
-          if (err) throw err;
+          if (err) console.log(err);
           var query = `INSERT INTO user_ (username,user_email,user_password) VALUES ('${req.body.username}','${req.body.email}','${password}')`;
           conn.query(query, function (err, result) {
-            if (err) throw err;
+            if (err) console.log(err);
             console.log("1 record inserted");
             req.session.user = {id:searched["user_id"],username:searched["username"]};
             res.redirect("/dashboard/dashboard.html");
@@ -109,29 +112,35 @@ app.post('/signup', function(req, res) {
         return;
       };
     });
-
-    
     return;
    });  
- 
-  });
 
 app.post("/dashboard/save",(req,res)=>{
   var query
-  conn.connect((err)=>{
-    if (err) throw err;
     for (var i=0;i < req.body.length;i++){
       query = `INSERT INTO todo_ (is_checked,todo_title,user_id) VALUES ('${req.body[i].checked}','${req.body[i].Todo_name}','${req.session.user.id}')`
       conn.query(query, function (err, result) {
-        if (err) throw err;
+        if (err) console.log(err);
         console.log("1 todo inserted")
       });
     };
     res.writeHead(200)
     res.end()
     return;
-  });
 });
+
+
+app.get("/dashboard/load",(req,res)=>{
+    conn.query("select * from todo_list.todo_;",(err,result)=>{
+      if (err) console.log(err);
+      var searched = result.filter((element)=>element.user_id === req.session.user.id)
+      res.writeHead(200,{"Content-Type":"text/json"})
+      res.end(JSON.stringify(searched))
+      
+    })
+
+  })
+
 app.all("*",(request,response)=>{
   request.url = (request.url == "/") ? "/index.html":request.url
   var questionofset = request.url.lastIndexOf("?")
@@ -152,10 +161,12 @@ app.all("*",(request,response)=>{
           response.writeHead(200,{"Content-Type":mimetype})
           response.end(data)
           console.log( request.url, mimetype );
+          return;
       } else {
           console.log ('file not found: ' + request.url);
           response.writeHead(404, "Not Found");
           response.end();
+          return;
       }});
 });
 app.listen(80,() => {
