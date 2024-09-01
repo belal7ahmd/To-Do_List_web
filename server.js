@@ -131,15 +131,25 @@ app.post("/dashboard/save",(req,res)=>{
 
 
 app.get("/dashboard/load",(req,res)=>{
-    conn.query("select * from todo_list.todo_;",(err,result)=>{
-      if (err) console.log(err);
-      var searched = result.filter((element)=>element.user_id === req.session.user.id)
-      res.writeHead(200,{"Content-Type":"text/json"})
-      res.end(JSON.stringify(searched))
-      
-    })
+  let filteredTodos = []
+  conn.query("select * from todo_list.list_",(err,lists)=>{
+    if (err) console.log(err)
+      conn.query("select * from todo_list.list_",(err,todos)=>{
+        if (err) console.log(err)
+        
+        console.log(lists)
+        lists = lists.filter((list)=>list.user_id === req.session.user.id)
+        for (var i=0;i<lists.length;i++){
+          filteredTodos.append(todos.filter((todos)=>todos.list_id === lists))
+        }
+        console.log(filteredTodos)
+        return;
+      });
+    return;
+  });
 
-  })
+  return;
+});
 
 app.all("*",(request,response)=>{
   request.url = (request.url == "/") ? "/index.html":request.url

@@ -1,98 +1,119 @@
 
-fetch("load",{method:"GET"}).then((res)=>res.json()).then((json)=>{
-    
-    for (let i=0;i<json.length;i++){
-        new_element(json[i].todo_title,(json[i].is_checked === 1)?true:false)
-    }
-})
+loadTodos()
 
-
-function check(parent){
-    let checkbox = parent.getElementsByClassName("checkbox").item(0)
-    parent.classList.toggle("checked")
-    if (parent.classList.item(1) == "checked"){
-        checkbox.checked = true
-
-    }
-    else {
-        checkbox.checked = false
-    }
-};
-
-function Delete(btn){
-    let parent = btn.parentElement
-    parent.remove()
-};
-
-function add_btn(){
-    let textArea = document.getElementById("textArea");
-
-    let text = textArea.value
-    if (text.split(" ") == ""){
-        textArea.focus()
-        alert("the to do has to have a title")
-        return;
-    };
-
-    textArea.value = ""
-
-    new_element(text,false)
+function loadTodos(){
+    fetch("load",{
+        method:"GET"
+    }).then()
 }
 
-function new_element(title,checked){
+function addList(btn){
+    newList('',btn.parentElement,btn)
 
-    let main_div = document.createElement("div");
-    let checkbox = document.createElement("input");
-    let title_element = document.createElement("h3");
-    let del_btn = document.createElement("input");
-
-    main_div.className = "To_Do_div";
-    (checked)?main_div.classList.add("checked"):"no"
-    main_div.onclick = function(){check(this)};
-
-    checkbox.className = "checkbox";
-    checkbox.type = "checkbox";
-    checkbox.checked = checked
-
-    title_element.textContent = title;
-    title_element.className = "Text To_Do_Title";
     
-    del_btn.type = "image"
-    del_btn.src = "images/delete_13169948.png"
-    del_btn.className = "del_btn";
-    del_btn.onclick = function(){Delete(this)};
+}
 
+function addTodo(btn){
 
-    main_div.appendChild(checkbox);
-    main_div.appendChild(title_element);
-    main_div.appendChild(del_btn);
-
-    document.getElementById("To_Do_list_div").appendChild(main_div);
-    
-
-
+    let parent = btn.parentElement
+    parent.removeChild(btn)
+    newElement('',false,parent)
+    parent.appendChild(btn)
 };
 
-function sendSave(){
-    var Todos_elements = document.getElementsByClassName("To_Do_div");
-    var Todos_list = [];
-    var current;
-    for (let i=0;i < Todos_elements.length;i++){
-        current = Todos_elements.item(i)
-        Todos_list.push({
-            checked:(current.classList.contains("checked"))?1:0,
-            Todo_name:current.getElementsByClassName("To_Do_Title")[0].textContent
-        });
-        
-    };
-    
+function check(todo){
+    if (!todo.classList.contains("checked")){
+        todo.getElementsByClassName("checkbox").item(0).checked = true
+        todo.getElementsByClassName("text").item(0).classList.add("marked-text")
+        todo.classList.add("checked")
+    } else {
+        todo.getElementsByClassName("checkbox").item(0).checked = false
+        todo.getElementsByClassName("text").item(0).classList.remove("marked-text")
+        todo.classList.remove("checked")
+    }
+}
 
-    fetch("save", {
-        method: "POST",
-        body: JSON.stringify(Todos_list),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      });
+function deleteTodo(btn){
+    btn.parentElement.remove()
+}
 
+function deleteList(btn){
+    btn.parentElement.parentElement.remove()
+}
+
+function newElement(text='',is_checked,list){
+    let mainDiv = document.createElement("div")
+    let checkbox = document.createElement("input")
+    let title = document.createElement("h3")
+    let delBtn = document.createElement("input")
+
+    mainDiv.className = "todoDiv depth"
+    if (is_checked) mainDiv.classList.add("checked");
+    mainDiv.onclick = function(){check(this)}
+
+    checkbox.type = "checkbox"
+    checkbox.className = "checkbox"
+    checkbox.checked = is_checked
+
+    title.className = "text"
+    title.textContent = text
+    title.contentEditable = true
+
+
+    delBtn.type = "image"
+    delBtn.src = "images/trash_icon.png"
+    delBtn.className = "delBtn"
+    delBtn.onclick = function(){deleteTodo(this)}
+
+    mainDiv.appendChild(checkbox)
+    mainDiv.appendChild(title)
+    mainDiv.appendChild(delBtn)
+
+    list.appendChild(mainDiv)
+
+    title.focus()
+
+}
+
+function newList(text,list,btn){
+    let listTitle = document.createElement("h2")
+    let headerDiv = document.createElement("div")
+    let delBtn = document.createElement("input")
+    let createBtn = document.createElement("input")
+    let listDiv = document.createElement("div")
+
+    headerDiv.className = "listHeaderDiv"
+
+    listTitle.className = "text"
+    listTitle.textContent = text
+    listTitle.style="text-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);"
+    listTitle.contentEditable = true
+
+    delBtn.type = "image"
+    delBtn.src = "images/trash_icon.png"
+    delBtn.className = "delListBtn"
+    delBtn.onclick = function(){deleteList(this)}
+
+    createBtn.type = "image"
+    createBtn.src = "images/add.png"
+    createBtn.className ="addTodo" 
+    createBtn.onclick = function(){addTodo(this)}
+
+    listDiv.className = "todoListDiv"
+
+    listDiv.appendChild(createBtn)
+
+    headerDiv.appendChild(listTitle)
+    headerDiv.appendChild(delBtn)
+
+    list.appendChild(headerDiv)
+    list.appendChild(listDiv)
+    listTitle.focus()
+
+    list.removeChild(btn)
+
+    let newList = document.createElement("div")
+    newList.className = "listDiv"
+    newList.appendChild(btn)
+    list.parentElement.appendChild(newList)
 }

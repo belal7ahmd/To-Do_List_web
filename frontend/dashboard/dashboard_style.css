@@ -1,78 +1,97 @@
 body{
-    align-items: center;
-    background-color: #f0ffff;
-    height: 100vh;
-    width: 100vw;
-    margin: 0px;
-    position: absolute;
-}
-
-.Text{
-    font-family: 'Roboto' ,sans-serif;
-    font-style: normal;
-    color:white;
-}
-
-.To_Do_Title{
-    padding: 0px;
-    margin: 12px;
-}
-
-.del_btn{
-    float: right;
-    position: absolute;
-    margin-left: 270px;
-    margin-top: 16px;
-    height: 20px;
-    width: 20px;
-}
-
-.To_Do_div{
-    background-color: #3A1078;
-    border-radius: 20px;
-
-    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
-    
-    height: 50px;
-    width: 300px;
-
-    margin: 10px;
-    
+    background-color: rgb(240, 255, 255);
     display: flex;
-
-    cursor: pointer;
+    
 }
 
-.checked{
+.image{
+    filter: blur();
+}
+
+.text{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-style: normal;
+    color: #004953;
+    margin: 5px;
+    flex-grow: 1;
+}
+
+.marked-text{
     text-decoration: line-through;
-    background-color: #4E31AA;
 }
 
-
-.To_Do_div:hover{
-    background-color: #4E31AA;
+.addListBtn{
+    height: 30px;
+    width: 30px;
+    margin-left: 20px;
 }
 
-.checkbox{
-    appearance: none;
-    vertical-align: middle;
-    border-radius: 50%;
-    border: 1px solid black;
-    width: 25px;
+.todoDiv{
+    display: flex;
+    background-color: #b2ffff;
+    margin: 4px;
+    border-radius: 20px;
+    padding: 10px;
+    width: 290px;
+}
+.todoDiv:hover{
+    background-color: #7df9ff;
+}
+.checked{
+    background-color: #7df9ff;
+    box-shadow:none;
+}
+
+.checkbox {
+    width:25px;
     height: 25px;
-    margin-top: 12px;
-    margin-left: 10px;
-
-}
-.checkbox:checked{
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid black;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+  }
+.checkbox:checked {
     appearance: auto;
     clip-path: circle(50% at 50% 50%);
     background-color: blue;
 }
-textarea{
-    resize: none;
-    border-radius: 10px;
-    background-color:#ffffff;
-    border:solid #2b2a33 1px;
-    padding: 5px;   
+
+
+.delBtn{
+    height: 20px;
+    width: 17px;
+    position: absolute;
+    margin-top: 6px;
+    margin-left: 270px;
+}
+
+.addTodo{
+    height: 30px;
+    width: 30px;
+    margin:20px;
+}
+
+.listDiv{
+    width: 290px;
+    margin:20px;
+    flex-shrink: 0;
+    display:block;
+}
+
+
+.listHeaderDiv{
+    display: flex;
+}
+.delListBtn{
+    width:17px;
+    height: 20px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.depth{
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
 }
