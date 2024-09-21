@@ -52,6 +52,7 @@ body{
     -webkit-appearance: none;
     outline: none;
     cursor: pointer;
+    flex-shrink: 0;
   }
 .checkbox:checked {
     appearance: auto;
@@ -94,4 +95,10 @@ body{
 
 .depth{
     box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+#saveBtn{
+    position: fixed;
+    bottom:1%;
+    left: 50%;
 }

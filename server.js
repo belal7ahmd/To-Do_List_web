@@ -4,6 +4,8 @@ var mysql = require("mysql2")
 var cors = require("cors");
 var bcrypt = require("bcrypt");
 const session = require("express-session");
+const { randomUUID } = require("crypto");
+
 var conn = mysql.createConnection({
   host:"localhost",
   user:"program",
@@ -25,15 +27,15 @@ var app = express();
 
 app.use(cors()); // Allows request from any IP (prevent any CORS error)
 
+app.use(express.json({
+  limit:10000
+}));
+
 // Enable parsing of URL-encoded data on all routes:
 app.use(express.urlencoded({
   extended: false, // Whether to use algorithm that can handle non-flat data strutures
   limit: 10000, // Limit payload size in bytes
   parameterLimit: 4, // Limit number of form items on payload
-}));
-
-app.use(express.json({
-  limit:10000
 }));
 
 app.use(session({
@@ -44,7 +46,7 @@ app.use(session({
   cookie:{
     secure: false,
     // Enable only for HTTPS
-    httpOnly: false,
+    httpOnly: true,
     // Prevent client-side access to cookies
     sameSite: 'strict'
      // Mitigate CSRF attacks
@@ -52,13 +54,14 @@ app.use(session({
 }));
 
 app.post('/login',function(req,res){
+
   console.log(req.body)
     conn.query("select user_id,username,user_password from todo_list.user_;",(err,result)=>{
-      if (err) console.log(err);
+      if (err) {console.log(err);express.next(err)};
       searched = result.find(user => user.username === req.body.username)
       if (searched !== undefined){
         bcrypt.compare(req.body.password,searched["user_password"],(err,same)=>{
-          if (err) console.log(err);
+          if (err) {console.log(err);express.next(err)};
           if (same){
             req.session.user = {id:searched["user_id"],username:searched["username"]}
             console.log(req.session.user)
@@ -87,18 +90,17 @@ app.post('/signup', function(req, res) {
   console.log(req.body)
 
     conn.query("select user_id,username from todo_list.user_;",(err,result)=>{
-      if (err) console.log(err);
+      if (err) {console.log(err);express.next(err)};
       var searched = result.find(user => user.username === req.body.username);
       if (searched === undefined){
 
         bcrypt.hash(req.body.password,10,(err,password)=>{
-          if (err) console.log(err);
+          if (err) {console.log(err);express.next(err)};
           var query = `INSERT INTO user_ (username,user_email,user_password) VALUES ('${req.body.username}','${req.body.email}','${password}')`;
           conn.query(query, function (err, result) {
-            if (err) console.log(err);
+            if (err) {console.log(err);express.next(err)};
             console.log("1 record inserted");
-            req.session.user = {id:searched["user_id"],username:searched["username"]};
-            res.redirect("/dashboard/dashboard.html");
+            res.redirect("/login/login.html");
             res.end();
             return;
         });
@@ -116,33 +118,40 @@ app.post('/signup', function(req, res) {
    });  
 
 app.post("/dashboard/save",(req,res)=>{
-  var query
-    for (var i=0;i < req.body.length;i++){
-      query = `INSERT INTO todo_ (is_checked,todo_title,user_id) VALUES ('${req.body[i].checked}','${req.body[i].Todo_name}','${req.session.user.id}')`
-      conn.query(query, function (err, result) {
-        if (err) console.log(err);
-        console.log("1 todo inserted")
-      });
-    };
-    res.writeHead(200)
-    res.end()
-    return;
+  console.log(req.body)
+  for (var l=0;l<req.body.lists.length;l++){
+    var list = req.body.lists[l]
+    var query
+    if (list.insert){
+      query = `INSERT INTO list_ * VALUES (${randomUUID()},${list.list_title},${req.session.user.id})`
+    } else {
+      query = `UPDATE list_ SET list_title="${list.list_title}" where list_id=${list.list_id}`
+    }
+    conn.query(query,(err,result)=>{
+      if (err){console.log(err);express.next(err)}
+      console.log("inserted")
+    })
+  };
+  res.writeHead(200,"Saved")
+  res.end()
+  return
 });
 
 
 app.get("/dashboard/load",(req,res)=>{
   let filteredTodos = []
   conn.query("select * from todo_list.list_",(err,lists)=>{
-    if (err) console.log(err)
-      conn.query("select * from todo_list.list_",(err,todos)=>{
-        if (err) console.log(err)
-        
-        console.log(lists)
+    if (err) {console.log(err);express.next(err)}
+      conn.query("select * from todo_list.todo_",(err,todos)=>{
+        if (err) {console.log(err);express.next(err)}
+
         lists = lists.filter((list)=>list.user_id === req.session.user.id)
         for (var i=0;i<lists.length;i++){
-          filteredTodos.append(todos.filter((todos)=>todos.list_id === lists))
+          filteredTodos.push(todos.filter((todo)=>todo.list_id === lists[i].list_id))
         }
         console.log(filteredTodos)
+        res.writeHead(200,{"Content-Type":"text/json"})
+        res.end(JSON.stringify({lists:lists,todos:filteredTodos}))
         return;
       });
     return;
