@@ -96,7 +96,7 @@ app.post('/signup', function(req, res) {
 
         bcrypt.hash(req.body.password,10,(err,password)=>{
           if (err) {console.log(err);express.next(err)};
-          var query = `INSERT INTO user_ (username,user_email,user_password) VALUES ('${req.body.username}','${req.body.email}','${password}')`;
+          var query = `INSERT INTO user_ (user_id,username,user_email,user_password) VALUES ('${randomUUID()}','${req.body.username}','${req.body.email}','${password}')`;
           conn.query(query, function (err, result) {
             if (err) {console.log(err);express.next(err)};
             console.log("1 record inserted");
@@ -118,23 +118,53 @@ app.post('/signup', function(req, res) {
    });  
 
 app.post("/dashboard/save",(req,res)=>{
+  var query
   console.log(req.body)
-  for (var l=0;l<req.body.lists.length;l++){
-    var list = req.body.lists[l]
-    var query
+  for (var l=0;l<req.body.length;l++){
+    var list = req.body[l]
+
     if (list.insert){
-      query = `INSERT INTO list_ * VALUES (${randomUUID()},${list.list_title},${req.session.user.id})`
+      var id = randomUUID()
+      query = `INSERT INTO list_ VALUES ("${id}","${list.list_title}","${req.session.user.id}")`
+      list.list_id = id
     } else {
-      query = `UPDATE list_ SET list_title="${list.list_title}" where list_id=${list.list_id}`
+      if (list.Delete){
+        query = `delete from list_ where list_id="${list.list_id}"`
+      } else {
+        query = `UPDATE list_ SET list_title="${list.list_title}" where list_id="${list.list_id}"`
+      }
+      
+      
     }
     conn.query(query,(err,result)=>{
       if (err){console.log(err);express.next(err)}
-      console.log("inserted")
+      return;
     })
+    if (list.Delete){
+      list = null
+      continue
+    }
+    for (var t=0;t<list.todos.length;t++){
+      var todo = list.todos[t]
+      if (todo.insert){
+        query = `INSERT INTO todo_ VALUES ("${randomUUID()}",${todo.is_checked ? 1:0},"${todo.todo_title}","${list.list_id}")`
+      } else {
+        if (todo.Delete){
+          query = `delete from todo_ where todo_id="${todo.todo_id}"`
+          todo = null
+        } else {
+          query = `UPDATE todo_ SET todo_title="${todo.todo_title}" ,is_checked=${todo.is_checked ? 1:0} where list_id="${list.list_id}"`
+        }
+         
+      }
+      conn.query(query,(err,result)=>{
+        if (err){console.log(err);express.next(err)}
+      })
+    };
   };
   res.writeHead(200,"Saved")
   res.end()
-  return
+  return;
 });
 
 
@@ -156,7 +186,6 @@ app.get("/dashboard/load",(req,res)=>{
       });
     return;
   });
-
   return;
 });
 
