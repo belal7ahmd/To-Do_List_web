@@ -37,6 +37,7 @@ body{
 .todoDiv:hover{
     background-color: #7df9ff;
 }
+
 .checked{
     background-color: #7df9ff;
     box-shadow:none;

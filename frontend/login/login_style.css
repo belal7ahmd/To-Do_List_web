@@ -13,17 +13,18 @@ body{
     margin: 0
 }
 
-textarea{
+.input{
     resize: none;
     border-radius: 10px;
     background-color:#ffffff;
     border:solid #2b2a33 1px;
     margin: 10px;
     padding: 5px;
+    height: 25px;    
 }
 
-input{
-    color:#2b2a33
+input.text{
+    color:#2b2a33;
 }
 
 #myform{

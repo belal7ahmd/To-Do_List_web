@@ -1,0 +1,23 @@
+body{
+    background-color: azure;
+}
+
+.text{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(28, 27, 33);
+    text-decoration: none;
+    
+}
+
+.logup{
+    background-color: white;
+}
+
+.center{
+    margin: auto;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+    width: 25vw;
+    height: 30vh;
+}
