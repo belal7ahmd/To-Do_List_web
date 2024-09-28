@@ -1,15 +1,6 @@
 var list_id = 0
 var todo_id = 0
-var all_json = []
 
-function autoSave(){
-    document.querySelectorAll(".text").forEach((title)=>{
-        title.addEventListener("change",()=>{
-            var name = title.classList.contains("todoDiv") ? "Todo" : "List"
-
-        })
-    })
-}
 
 load()
 function load(){
@@ -19,70 +10,71 @@ function load(){
             var list = json.lists[i]
             newList(list.list_id,list.list_title,document.body,document.getElementsByClassName("addListBtn").item(0))
             var listElement = document.getElementsByClassName("listDiv").item(i)
+            listElement.getElementsByClassName("listTitle").item(0).addEventListener("input",()=>{
+                save(false,false,false,listElement.getElementsByClassName("listTitle").item(0),listElement.id)
+            })
 
-            all_json.push({list_id:list.list_id,list_title:list.list_title,todos:[]})
             for (var t=0;t < json.todos[i].length;t++){
                     var todo = json.todos[i][t]
-                    all_json[i].todos.push({todo_id:todo.todo_id,todo_title:todo.todo_title,is_checked:todo.is_checked})
- 
+                
                     newElement(todo.todo_id,todo.todo_title,todo.is_checked,listElement.getElementsByClassName("todoListDiv").item(0),listElement.getElementsByClassName("addTodo").item(0))
+                    listElement.getElementsByClassName("todoDiv").namedItem(todo.todo_id).getElementsByClassName("todoTitle").item(0).addEventListener("input",()=>{
+                        save(false,false,true,listElement.getElementsByClassName("todoDiv").namedItem(todo.todo_id).getElementsByClassName("listTitle").item(0),listElement.getElementsByClassName("todoDiv").namedItem(todo.todo_id),listElement.getElementsByClassName("todoDiv").namedItem(todo.todo_id).classList.contains("checked"),listElement.id)
+                    })
             }
         }
     })
 }
 
-function save(){
-    for (var l=0;l<all_json.length;l++){
-        if (all_json[l].Delete){
-            continue
-        }
-
-        all_json[l].list_title = document.getElementsByClassName("listDiv").namedItem(`${all_json[l].list_id}`).getElementsByClassName("listTitle").item(0).textContent
-        
-        for (var t=0;t<all_json[l].todos.length;t++){
-            if (all_json[l].todos[t].Delete){
-                continue
-            }
-            var todoElement = document.getElementsByClassName("todoDiv").namedItem(`${all_json[l].todos[t].todo_id}`)
-            all_json[l].todos[t].todo_title = todoElement.getElementsByClassName("todoTitle").item(0).textContent
-            all_json[l].todos[t].is_checked = todoElement.classList.contains("checked")
-        }
+async function save(Delete=false,insert=false,is_todo=false,title_element=createElement("h2"),id="",is_checked=false,listId=""){
+    var json = {}
+    if (Delete){
+        var title = ""
+    } else {
+        var title = title_element.textContent
     }
-    fetch("save",{method:"POST",body:JSON.stringify(all_json),headers:{"Content-Type":"application/json"}})
-    for (var l=0;l<all_json.length;l++){
-        var list = all_json[l]
-    
-        if (list.insert){
-            delete list.insert
+    if (is_todo){
+        json = {todo:true,todo_title:title,todo_id:id,list_id:listId,is_checked:is_checked}
+        if (insert){
+            json.insert = true
         } else {
-          if (list.Delete){
-            all_json.splice(all_json.indexOf(list),1)
-          };
-          
-        }
-        for (var t=0;t<list.todos.length;t++){
-          var todo = list.todos[t]
-          if (todo.insert){
-            query = `INSERT INTO todo_ VALUES ("${randomUUID()}",${todo.is_checked ? 1:0},"${todo.todo_title}","${list.list_id}")`
-          } else {
-            if (todo.Delete){
-              query = `delete from todo_ where todo_id="${todo.todo_id}"`
-              todo = null
-            } else {
-              query = `UPDATE todo_ SET todo_title="${todo.todo_title}" ,is_checked=${todo.is_checked ? 1:0} where list_id="${list.list_id}"`
+            if (Delete){
+                json.delete = true
             }
-             
-          }
-        };
+        }
+    } else {
+        json = {list_title:title,list_id:id}
+        if (insert){
+            json.insert = true
+        } else {
+            if (Delete){
+                json.delete = true
+            }
+        }
+    }
+    var Id = await (await fetch("save",{method:"POST",body:JSON.stringify(json),headers:{"Content-Type":"application/json"}})).text()
+
+    if (insert){
+        if (is_todo){
+            document.getElementsByClassName("todoDiv").namedItem(`${id}`).id = Id
+        } else {
+            document.getElementById(id).id = Id
+        }
     }
 }
-function addList(btn){
-    newList(list_id,'',document.body,btn)
-    all_json.push({list_id:list_id,list_title:"",insert:true,todos:[]})
-    list_id++
 
+function addList(btn){
+    var listId = list_id
+    newList(listId,'',document.body,btn)
     
-}
+    list_id++
+    var title = document.getElementById(`${listId}`).getElementsByClassName("listTitle").item(0)
+    save(false,true,false,title,listId)
+    title.addEventListener("input",()=>{
+        save(false,false,false,title,title.parentElement.parentElement.id)
+    })
+    
+};
 
 function addTodo(btn){
     newElement(todo_id,'',false,btn.parentElement,btn)
@@ -97,41 +89,44 @@ function addTodo(btn){
     }
     lid = str ? lid:parseInt(lid)
     console.log(lid)
-    var list = all_json.find((value)=>{console.log(value);return lid === value.list_id})
-    list.todos.push({todo_id: todo_id,todo_title:"",is_checked:false,insert:true})
+    var todoId = todo_id
     todo_id++
+    var title = btn.parentElement.getElementsByClassName("todoDiv").namedItem(`${todoId}`).getElementsByClassName("todoTitle").item(0)
+    save(false,true,true,title,todoId,title.parentElement.classList.contains("checked"),title.parentElement.parentElement.parentElement.id)
+    title.addEventListener("input",()=>{
+        save(false,false,true,title,title.parentElement.id,title.parentElement.classList.contains("checked"),title.parentElement.parentElement.parentElement.id)
+    })
 };
 
 function check(todo){
-    if (!todo.classList.contains("checked")){
+    console.log(todo.parentElement,document.getElementsByClassName("todoDiv").namedItem(todo.id) === null)
+    if (document.getElementsByClassName("todoDiv").namedItem(todo.id) !== null){
+        if (!todo.classList.contains("checked")){
         todo.getElementsByClassName("checkbox").item(0).checked = true
         todo.getElementsByClassName("text").item(0).classList.add("marked-text")
         todo.classList.add("checked")
-    } else {
+        } else {
         todo.getElementsByClassName("checkbox").item(0).checked = false
         todo.getElementsByClassName("text").item(0).classList.remove("marked-text")
         todo.classList.remove("checked")
-    }
-}
+        }
+        save(false,false,true,todo.getElementsByClassName("todoTitle").item(0),todo.id,todo.classList.contains("checked"),todo.parentElement.parentElement.id)
+    } 
+}  
 
 function deleteTodo(btn){
     var todoDiv = btn.parentElement;
     var listDiv = todoDiv.parentElement.parentElement
     var listId = listDiv.id
     var todoId = todoDiv.id
+    save(true,false,true,document.createElement("h2"),todoId,todoDiv.classList.contains("checked"),listId)
     todoDiv.remove()
-    var listIndex = all_json.findIndex((value)=>{return value.list_id === listId})
-    var todoIndex = all_json[listIndex].todos.findIndex((value)=>{return value.todo_id === todoId})
-    all_json[listIndex].todos[todoIndex].Delete = true
 }
 
 function deleteList(btn){
     var list_div = btn.parentElement.parentElement;
-    var id = list_div.id
     list_div.remove()
-    var list_index = all_json.findIndex((value)=>{return value.list_id === id})
-    all_json[list_index].Delete = true
-    console.log(all_json[list_index])
+    save(true,false,false,btn.parentElement.getElementsByClassName("listTitle").item(0),btn.parentElement.parentElement.id)
 }
 
 function newElement(id,text='',is_checked,list,btn){

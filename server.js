@@ -118,67 +118,60 @@ app.post('/signup', function(req, res) {
    });  
 
 app.post("/dashboard/save",(req,res)=>{
-  var query
   console.log(req.body)
-  for (var l=0;l<req.body.length;l++){
-    var list = req.body[l]
-
+  var query
+  if (req.body.todo){
+    var todo = req.body
+    if (todo.insert){
+      var id = randomUUID()
+      query = `INSERT INTO todo_ VALUES ("${id}",${todo.is_checked ? 1:0},"${todo.todo_title}","${todo.list_id}","${performance.now()}")`
+    } else if (todo.delete) {
+      query = `delete from todo_ where todo_id="${todo.todo_id}"`
+    } else {
+      query = `update todo_ set is_checked=${todo.is_checked ? 1:0}, todo_title="${todo.todo_title}" where todo_id="${todo.todo_id}"`
+    }
+  } else {
+    var list = req.body
     if (list.insert){
       var id = randomUUID()
-      query = `INSERT INTO list_ VALUES ("${id}","${list.list_title}","${req.session.user.id}")`
-      list.list_id = id
+      query = `INSERT INTO list_ VALUES ("${id}","${list.list_title}","${req.session.user.id}","${performance.now()}")`
+    } else if (list.delete) {
+      query = `delete from list_ where list_id="${list.list_id}"`
     } else {
-      if (list.Delete){
-        query = `delete from list_ where list_id="${list.list_id}"`
-      } else {
-        query = `UPDATE list_ SET list_title="${list.list_title}" where list_id="${list.list_id}"`
-      }
-      
-      
+      query = `update list_ set list_title="${list.list_title}" where list_id="${list.list_id}"`
     }
-    conn.query(query,(err,result)=>{
-      if (err){console.log(err);express.next(err)}
-      return;
-    })
-    if (list.Delete){
-      list = null
-      continue
-    }
-    for (var t=0;t<list.todos.length;t++){
-      var todo = list.todos[t]
-      if (todo.insert){
-        query = `INSERT INTO todo_ VALUES ("${randomUUID()}",${todo.is_checked ? 1:0},"${todo.todo_title}","${list.list_id}")`
-      } else {
-        if (todo.Delete){
-          query = `delete from todo_ where todo_id="${todo.todo_id}"`
-          todo = null
-        } else {
-          query = `UPDATE todo_ SET todo_title="${todo.todo_title}" ,is_checked=${todo.is_checked ? 1:0} where list_id="${list.list_id}"`
-        }
-         
-      }
-      conn.query(query,(err,result)=>{
-        if (err){console.log(err);express.next(err)}
-      })
-    };
-  };
-  res.writeHead(200,"Saved")
+  }
+  conn.query(query,(err,result)=>{
+    if (err){console.log(err)}
+    console.log("inserted")
+  })
+  if (req.body.insert){
+    res.writeHead(200,{"Content-Type":"plain/text"})
+    console.log(id)
+    res.end(id)
+    return;
+  }
+  res.writeHead(200,"inserted")
   res.end()
-  return;
 });
 
 
 app.get("/dashboard/load",(req,res)=>{
   let filteredTodos = []
-  conn.query("select * from todo_list.list_",(err,lists)=>{
+  conn.query("select * from todo_list.list_ ORDER BY time_ asc",(err,lists)=>{
     if (err) {console.log(err);express.next(err)}
-      conn.query("select * from todo_list.todo_",(err,todos)=>{
+      conn.query("select * from todo_list.todo_ ORDER BY time_ asc",(err,todos)=>{
         if (err) {console.log(err);express.next(err)}
 
         lists = lists.filter((list)=>list.user_id === req.session.user.id)
+        lists.sort((a,b)=>{a.time_-b.time_})
+        var todos
         for (var i=0;i<lists.length;i++){
-          filteredTodos.push(todos.filter((todo)=>todo.list_id === lists[i].list_id))
+          todos = todos.filter((todo)=>todo.list_id === lists[i].list_id)
+          todos.sort((a,b)=>{a.time_ - b.time_})
+          filteredTodos.push(todos)
         }
+        
         console.log(filteredTodos)
         res.writeHead(200,{"Content-Type":"text/json"})
         res.end(JSON.stringify({lists:lists,todos:filteredTodos}))
