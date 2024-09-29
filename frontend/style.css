@@ -1,5 +1,6 @@
 body{
     background-color: azure;
+    padding: 10px;
 }
 
 .text{
@@ -9,15 +10,78 @@ body{
     
 }
 
-.logup{
-    background-color: white;
+.header{
+    text-align: center;
+    text-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
 }
 
-.center{
-    margin: auto;
-    background-color: white;
+.headerBtn{
+    background-color: #b2ffff;
+    border-radius: 20px;
     padding: 10px;
+    position: relative;
+    font-size: larger;
     box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
-    width: 25vw;
+}
+
+.headerBtn:hover{
+    background-color: #7df9ff;
+}
+
+.featuresSection{
+    display: flex;
+}
+
+.featureDiv{
+    background-color: white;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+    margin: 1vw;
+    padding: 20px;
+}
+
+.appScreenshotSection{
+    padding: 10px;
+    text-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+.imgScreenshot{
+    height: 400px;
+    width: 1000px;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+    border-radius: 10px;
+}
+
+.ctaFooter{
+    text-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+    padding: 10px;
     height: 30vh;
+    left:45%;
+    text-align: center;
+}
+
+.footerSignupBtn{
+    background-color: #b2ffff;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 1vw;
+    position: relative;
+    font-size: x-large;
+    top: 10px;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+.footerSignupBtn:hover{
+    background-color: #7df9ff;
+}
+
+.donationsFooter{
+    background-color: #222222;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.302), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+.footerText{
+    color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
