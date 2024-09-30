@@ -7,7 +7,19 @@
     <title>To Do List</title>
 </head>
 <body>
-
+    <input type="image" src="images/open-menu.png" onclick="openMenu()" alt="Open sidebar" class="openSidebarBtn">
+    <section id="sideBar">
+        <input type="image" src="images/open-menu.png" onclick="closeMenu()" alt="Open sidebar" class="openSidebarBtn">
+        <h1 class="text">Todal</h1>
+        <div class="sideBarBtn settingsBtn"><a class="text" href="" style="text-decoration: none;">Settings</a></div>
+        <ul class="tableList">
+            <li><input class="tableBtn" type="button" value="New List"></li>
+            <li><input class="tableBtn" type="button" value="New List"></li>
+            <li><input class="tableBtn" type="button" value="New List"></li>
+            <li><input class="tableBtn" type="button" value="New List"></li>
+        </ul>
+        <div class="sideBarBtn logoutBtn"><a class="text" href="" style="text-decoration: none;">Logout</a></div>
+    </section>
     
     <!--
         <div class="listDiv">
