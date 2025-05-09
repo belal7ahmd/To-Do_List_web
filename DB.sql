@@ -28,4 +28,4 @@ drop user program@localhost;
 flush privileges;
 create user program@localhost identified by 'pms2013pms';
 
-GRANT ALL ON *.* TO 'program'@'localhost' WITH GRANT OPTION;
+GRANT ALL ON *.* TO 'your_user_here'@'your_server_ip_here' WITH GRANT OPTION;
