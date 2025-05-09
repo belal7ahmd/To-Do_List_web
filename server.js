@@ -7,9 +7,9 @@ const session = require("express-session");
 const { randomUUID } = require("crypto");
 
 var conn = mysql.createConnection({
-  host:"localhost",
-  user:"program",
-  password:"pms2013pms",
+  host:"your_host_here",
+  user:"your_user_here",
+  password:"your_password_here",
   database:"todo_list"
 });
 
